@@ -25,11 +25,32 @@ pipeline {
                 sh 'npm test'
             }
         }
+
+        // Q9: Build Docker Image
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t devoptoday:latest .'
+            }
+        }
+
+        // Q9: Deploy Application using Docker
+        stage('Deploy with Docker') {
+            steps {
+                sh '''
+                    docker rm -f devoptoday-container || true
+                    docker run -d \
+                        --name devoptoday-container \
+                        --restart unless-stopped \
+                        -p 3000:3000 \
+                        devoptoday:latest
+                '''
+            }
+        }
     }
 
     post {
         success {
-            echo 'SUCCESS: Application tests passed!'
+            echo 'SUCCESS: Application tested, built and deployed using Docker!'
         }
 
         failure {
