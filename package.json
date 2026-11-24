@@ -1,0 +1,14 @@
+
+{
+  "name": "devoptoday",
+  "version": "1.0.0",
+  "description": "A simple Node.js web application for CODERWANDA Ltd",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
