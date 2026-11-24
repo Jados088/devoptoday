@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | CODERWANDA Ltd</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:#080d1b;color:#edf2ff}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:250px;background:#10192d;border-right:1px solid #26334e;padding:27px 17px;position:fixed;inset:0 auto 0 0;z-index:5}
+.logo{font-size:21px;font-weight:900;padding:8px 10px 35px}
+.logo span{color:#9175ff}
+.nav-title{font-size:10px;color:#71809e;letter-spacing:2px;padding:12px}
+.nav a{display:block;padding:14px 13px;border-radius:9px;color:#aab6ce;text-decoration:none;font-size:14px;margin:5px 0;cursor:pointer}
+.nav a:hover,.nav a.active{background:linear-gradient(90deg,#6748d7,#2875c8);color:white}
+.nav a span{margin-right:12px}
+.sidebar-bottom{position:absolute;bottom:25px;left:20px;right:20px}
+.sidebar-bottom a{display:block;padding:13px;color:#aab6ce;text-decoration:none;cursor:pointer}
+.main{margin-left:250px;width:calc(100% - 250px);padding:30px 35px}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:35px;gap:15px}
+.topbar h2{font-size:24px}
+.topbar p{color:#8493b0;font-size:13px;margin-top:7px}
+.actions{display:flex;align-items:center;gap:12px}
+.icon-btn{background:#151f35;border:1px solid #293754;color:white;padding:11px 14px;border-radius:10px;cursor:pointer}
+.avatar{width:39px;height:39px;border-radius:50%;background:linear-gradient(135deg,#8a66ff,#168bce);display:grid;place-items:center;font-weight:bold}
+.welcome{background:linear-gradient(105deg,#5235ca,#166ebc);padding:28px 30px;border-radius:17px;margin-bottom:27px;position:relative;overflow:hidden}
+.welcome h1{font-size:25px;margin-bottom:9px}
+.welcome p{font-size:14px;color:#e0e9ff}
+.welcome:after{content:"✦";position:absolute;right:50px;top:0;font-size:120px;color:#ffffff17}
+.section-title{font-size:17px;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:17px;margin-bottom:30px}
+.stat{background:#111b30;border:1px solid #263550;border-radius:14px;padding:22px}
+.stat-icon{font-size:23px;margin-bottom:17px}
+.stat h3{font-size:27px;margin-bottom:7px}
+.stat p{font-size:12px;color:#8493b0}
+.panel{background:#111b30;border:1px solid #263550;border-radius:15px;padding:23px;margin-bottom:25px}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}
+.panel-head h3{font-size:17px}
+.search{background:#0a1224;border:1px solid #293754;border-radius:8px;padding:11px;color:white;outline:none;width:230px}
+.search:focus{border-color:#8b72fa}
+table{width:100%;border-collapse:collapse;min-width:570px}
+th{text-align:left;color:#8090ae;font-size:11px;text-transform:uppercase;letter-spacing:1px;padding:13px;border-bottom:1px solid #293754}
+td{padding:16px 13px;border-bottom:1px solid #202c44;font-size:13px;color:#c8d3e8}
+.status{padding:6px 10px;border-radius:20px;background:#143a35;color:#4de2ad;font-size:11px}
+.delete{border:1px solid #663b49;color:#ff8998;background:#321e2c;border-radius:7px;padding:7px 10px;cursor:pointer}
+.delete:hover{background:#632c40}
+.table-wrap{overflow-x:auto}
+.profile{display:none}
+.profile.show{display:block}
+.profile input{width:100%;padding:12px;background:#0a1224;border:1px solid #293754;border-radius:8px;color:white;margin:10px 0 18px}
+.profile label{font-size:13px;color:#9eabc5}
+.primary{background:#7654ed;color:white;padding:12px 18px;border:0;border-radius:8px;cursor:pointer}
+.notice{display:none;position:fixed;right:25px;top:75px;background:#192944;border:1px solid #53658a;border-radius:12px;padding:20px;z-index:10;max-width:290px;box-shadow:0 10px 30px #0008}
+.notice.show{display:block}
+.notice p{font-size:13px;color:#aab6ce;margin-top:10px}
+.mobile-menu{display:none}
+.footer{text-align:center;color:#65738e;font-size:12px;padding:15px}
+@media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:700px){
+ .sidebar{transform:translateX(-100%);transition:.3s}
+ .sidebar.open{transform:translateX(0)}
+ .main{margin-left:0;width:100%;padding:20px 15px}
+ .mobile-menu{display:block}
+ .topbar h2{font-size:19px}
+ .welcome{padding:23px}
+ .welcome h1{font-size:21px}
+ .panel{padding:15px}
+ .search{width:150px}
+}
+@media(max-width:390px){.stats{grid-template-columns:1fr 1fr;gap:9px}.stat{padding:15px}.stat h3{font-size:22px}}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+ <div class="logo">CODE<span>RWANDA</span> LTD.</div>
+ <div class="nav-title">MAIN MENU</div>
+ <nav class="nav">
+  <a href="#" class="active" onclick="showSection('dashboard',this)"><span>▦</span>Dashboard</a>
+  <a href="#users" onclick="showSection('users',this)"><span>♙</span>User Management</a>
+  <a href="#profile" onclick="showSection('profile',this)"><span>◉</span>My Profile</a>
+  <a href="#" onclick="notifications()"><span>♢</span>Notifications</a>
+ </nav>
+ <div class="sidebar-bottom">
+  <div class="nav-title">ACCOUNT</div>
+  <a onclick="logout()">↪ &nbsp; Logout</a>
+ </div>
+</aside>
+
+<main class="main">
+ <header class="topbar">
+  <div style="display:flex;align-items:center;gap:12px">
+   <button class="icon-btn mobile-menu" onclick="toggleMenu()">☰</button>
+   <div>
+    <h2>Dashboard Overview</h2>
+    <p id="today"></p>
+   </div>
+  </div>
+  <div class="actions">
+   <button class="icon-btn" onclick="notifications()">♢</button>
+   <div class="avatar" id="avatar">C</div>
+  </div>
+ </header>
+
+ <section id="dashboard">
+  <div class="welcome">
+   <h1>Hello, <span id="welcomeName">User</span>! 👋</h1>
+   <p>Welcome to your CODERWANDA Ltd workspace. Here's your overview today.</p>
+  </div>
+
+  <h3 class="section-title">Platform Overview</h3>
+  <div class="stats">
+   <div class="stat"><div class="stat-icon">👥</div><h3 id="totalUsers">0</h3><p>Total Registered Users</p></div>
+   <div class="stat"><div class="stat-icon">🟢</div><h3 id="activeUsers">0</h3><p>Active Accounts</p></div>
+   <div class="stat"><div class="stat-icon">📊</div><h3 id="todayUsers">0</h3><p>Accounts Registered Today</p></div>
+   <div class="stat"><div class="stat-icon">🔐</div><h3>100%</h3><p>Dashboard Access Status</p></div>
+  </div>
+
+  <div class="panel">
+   <div class="panel-head">
+    <h3>Recent Activity</h3>
+    <span class="status">System Online</span>
+   </div>
+   <p style="font-size:13px;color:#9eabc5;line-height:2">
+    ✓ Your account is successfully connected.<br>
+    ✓ Dashboard services are available.<br>
+    ✓ User management is ready.
+   </p>
+  </div>
+ </section>
+
+ <section id="users" style="display:none">
+  <div class="panel">
+   <div class="panel-head">
+    <h3>Registered Users</h3>
+    <input class="search" id="search" placeholder="Search users..." oninput="renderUsers()">
+   </div>
+   <div class="table-wrap">
+    <table>
+     <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Status</th><th>Action</th></tr></thead>
+     <tbody id="userTable"></tbody>
+    </table>
+   </div>
+   <p id="empty" style="display:none;color:#8290aa;padding:20px;text-align:center">No users found.</p>
+  </div>
+ </section>
+
+ <section id="profile" class="profile">
+  <div class="panel">
+   <h3 style="margin-bottom:25px">My Profile</h3>
+   <label>Full Name</label>
+   <input id="profileName">
+   <label>Email Address</label>
+   <input id="profileEmail" disabled>
+   <button class="primary" onclick="saveProfile()">Save Profile</button>
+   <p id="profileMessage" style="margin-top:15px;color:#4de2ad;font-size:13px"></p>
+  </div>
+ </section>
+
+ <div class="footer">© 2026 CODERWANDA Ltd. All rights reserved.</div>
+</main>
+</div>
+
+<div class="notice" id="notice">
+ <strong>🔔 Notifications</strong>
+ <p>Welcome to CODERWANDA Ltd!</p>
+ <p>Your dashboard is ready to use.</p>
+ <p>All your account information is available here.</p>
+</div>
+
+<script>
+const session=JSON.parse(localStorage.getItem('cw_session')||'null');
+
+if(!session){
+ window.location.replace('login.html');
+ throw new Error('Login required');
+}
+
+let currentUser=session;
+
+function getUsers(){
+ return JSON.parse(localStorage.getItem('cw_users')||'[]');
+}
+function saveUsers(users){
+ localStorage.setItem('cw_users',JSON.stringify(users));
+}
+
+function setup(){
+ document.getElementById('welcomeName').textContent=currentUser.name.split(' ')[0];
+ document.getElementById('avatar').textContent=currentUser.name.charAt(0).toUpperCase();
+ document.getElementById('today').textContent=new Date().toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+ document.getElementById('profileName').value=currentUser.name;
+ document.getElementById('profileEmail').value=currentUser.email;
+ updateStats();
+}
+function updateStats(){
+ const users=getUsers();
+ document.getElementById('totalUsers').textContent=users.length;
+ document.getElementById('activeUsers').textContent=users.length;
+ const today=new Date().toDateString();
+ // Registration dates can be added by the backend in a production version.
+ document.getElementById('todayUsers').textContent='—';
+ renderUsers();
+}
+function renderUsers(){
+ const users=getUsers();
+ const q=document.getElementById('search').value.toLowerCase();
+ const filtered=users.filter(u=>
+  u.name.toLowerCase().includes(q)||u.email.toLowerCase().includes(q)
+ );
+ const table=document.getElementById('userTable');
+ table.innerHTML='';
+ document.getElementById('empty').style.display=filtered.length?'none':'block';
+ filtered.forEach(user=>{
+  const tr=document.createElement('tr');
+  const name=document.createElement('td');
+  const email=document.createElement('td');
+  const phone=document.createElement('td');
+  const status=document.createElement('td');
+  const action=document.createElement('td');
+  name.textContent=user.name;
+  email.textContent=user.email;
+  phone.textContent=user.phone||'—';
+  const badge=document.createElement('span');
+  badge.className='status';
+  badge.textContent='Registered';
+  status.appendChild(badge);
+  if(user.email===currentUser.email){
+   action.textContent='You';
+  }else{
+   const btn=document.createElement('button');
+   btn.className='delete';
+   btn.textContent='Delete';
+   btn.onclick=()=>deleteUser(user.email);
+   action.appendChild(btn);
+  }
+  tr.append(name,email,phone,status,action);
+  table.appendChild(tr);
+ });
+}
+function deleteUser(email){
+ if(!confirm('Are you sure you want to delete this user?'))return;
+ saveUsers(getUsers().filter(u=>u.email!==email));
+ updateStats();
+}
+function showSection(id,link){
+ ['dashboard','users','profile'].forEach(s=>{
+  document.getElementById(s).style.display=s===id?'block':'none';
+ });
+ document.querySelectorAll('.nav a').forEach(a=>a.classList.remove('active'));
+ if(link)link.classList.add('active');
+ document.getElementById('sidebar').classList.remove('open');
+}
+function saveProfile(){
+ const name=document.getElementById('profileName').value.trim();
+ if(!name)return;
+ currentUser.name=name;
+ localStorage.setItem('cw_session',JSON.stringify(currentUser));
+ const users=getUsers();
+ const user=users.find(u=>u.email===currentUser.email);
+ if(user)user.name=name;
+ saveUsers(users);
+ setup();
+ document.getElementById('profileMessage').textContent='Profile updated successfully!';
+}
+function notifications(){
+ document.getElementById('notice').classList.toggle('show');
+}
+function logout(){
+ localStorage.removeItem('cw_session');
+ window.location.href='login.html';
+}
+function toggleMenu(){
+ document.getElementById('sidebar').classList.toggle('open');
+}
+setup();
+</script>
+</body>
+</html>
