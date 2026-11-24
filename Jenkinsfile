@@ -2,6 +2,10 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(true)
+    }
+
     tools {
         nodejs 'NodeJS-22'
     }
@@ -10,6 +14,7 @@ pipeline {
 
         stage('Checkout') {
             steps {
+                deleteDir()
                 checkout scm
             }
         }
@@ -26,14 +31,12 @@ pipeline {
             }
         }
 
-        // Q9: Build Docker Image
         stage('Build Docker Image') {
             steps {
                 sh 'docker build -t devoptoday:latest .'
             }
         }
 
-        // Q9: Deploy Application using Docker
         stage('Deploy with Docker') {
             steps {
                 sh '''
